@@ -1,0 +1,268 @@
+:root {
+  --bg: #1c1c1e;
+  --surface: #262629;
+  --surface-alt: #303033;
+  --border: #3a3a3d;
+  --accent: #30d158;
+  --accent-dark: #22a043;
+  --text: #f5f5f5;
+  --text-secondary: #9a9a9e;
+  --danger: #ff453a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+#app {
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-header {
+  padding: 1rem 1rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+#screen-container {
+  flex: 1;
+  padding: 1rem;
+}
+
+.screen {
+  display: none;
+}
+
+.screen.active {
+  display: block;
+}
+
+.btn {
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 0.85rem 1.25rem;
+  min-height: 44px;
+  cursor: pointer;
+}
+
+.btn-block {
+  width: 100%;
+}
+
+.btn-large {
+  padding: 1.1rem;
+  font-size: 1.05rem;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: #08290f;
+}
+
+.btn-primary:active {
+  background: var(--accent-dark);
+}
+
+.btn-secondary {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--accent);
+  border: 1px dashed var(--border);
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.btn-text {
+  background: transparent;
+  color: var(--text-secondary);
+}
+
+.btn-icon {
+  background: transparent;
+  color: var(--text-secondary);
+  border: none;
+  font-size: 1rem;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+  min-height: auto;
+}
+
+.home-actions {
+  margin-top: 1rem;
+}
+
+.home-summary {
+  color: var(--text-secondary);
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+}
+
+.workout-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.workout-date {
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.exercise-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.exercise-card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.6rem;
+}
+
+.exercise-name-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  font-size: 1.05rem;
+  font-weight: 700;
+  padding: 0.35rem 0.1rem;
+}
+
+.exercise-name-input:focus {
+  outline: none;
+  border-bottom-color: var(--accent);
+}
+
+.exercise-meta {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.exercise-notes-input,
+.exercise-rest-input {
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  padding: 0.5rem 0.6rem;
+  font-size: 0.85rem;
+}
+
+.exercise-notes-input {
+  flex: 2;
+}
+
+.exercise-rest-input {
+  flex: 1;
+  min-width: 0;
+}
+
+.sets-header,
+.set-row {
+  display: grid;
+  grid-template-columns: 1.5rem 1fr 1fr 1fr 1.75rem;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.sets-header {
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  padding: 0 0 0.35rem;
+}
+
+.set-row {
+  margin-bottom: 0.4rem;
+}
+
+.set-number {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.set-row input {
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
+  padding: 0.5rem 0.3rem;
+  font-size: 0.95rem;
+  text-align: center;
+  width: 100%;
+  min-width: 0;
+}
+
+.set-row input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.workout-footer {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.workout-footer .btn-text {
+  flex: 1;
+}
+
+.workout-footer .btn-primary {
+  flex: 2;
+}
+
+input::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.6;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}

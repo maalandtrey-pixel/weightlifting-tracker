@@ -1,0 +1,11 @@
+{
+  "name": "Weight Tracker",
+  "short_name": "Weights",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#1c1c1e",
+  "theme_color": "#1c1c1e",
+  "icons": [
+    { "src": "icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

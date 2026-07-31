@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Weight Tracker</title>
+<meta name="theme-color" content="#1c1c1e" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Weights" />
+<link rel="manifest" href="manifest.json" />
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml" />
+<link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+<div id="app">
+  <header class="app-header">
+    <h1 id="header-title">Weight Tracker</h1>
+  </header>
+
+  <main id="screen-container">
+
+    <section id="screen-home" class="screen active">
+      <div class="home-actions">
+        <button id="btn-start-workout" class="btn btn-primary btn-large">+ Start New Workout</button>
+      </div>
+      <p id="home-summary" class="home-summary"></p>
+    </section>
+
+    <section id="screen-workout" class="screen">
+      <div class="workout-toolbar">
+        <span id="workout-date" class="workout-date"></span>
+      </div>
+      <div id="exercise-list"></div>
+      <button id="btn-add-exercise" class="btn btn-secondary btn-block">+ Add Exercise</button>
+      <div class="workout-footer">
+        <button id="btn-cancel-workout" class="btn btn-text">Cancel</button>
+        <button id="btn-finish-workout" class="btn btn-primary">Finish Workout</button>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<template id="template-exercise-card">
+  <div class="exercise-card">
+    <div class="exercise-card-header">
+      <input type="text" class="exercise-name-input" placeholder="Exercise name (e.g. Bench Press)" />
+      <button class="btn-icon btn-remove-exercise" aria-label="Remove exercise">✕</button>
+    </div>
+    <div class="exercise-meta">
+      <input type="text" class="exercise-notes-input" placeholder="Notes (optional)" />
+      <input type="number" class="exercise-rest-input" placeholder="Rest sec (optional)" inputmode="numeric" min="0" />
+    </div>
+    <div class="sets-table">
+      <div class="sets-header">
+        <span>Set</span><span>Weight</span><span>Reps</span><span>RPE</span><span></span>
+      </div>
+      <div class="sets-list"></div>
+    </div>
+    <button class="btn-add-set btn btn-ghost">+ Add Set</button>
+  </div>
+</template>
+
+<template id="template-set-row">
+  <div class="set-row">
+    <span class="set-number">1</span>
+    <input type="number" class="set-weight" placeholder="0" inputmode="decimal" step="0.5" min="0" />
+    <input type="number" class="set-reps" placeholder="0" inputmode="numeric" min="0" />
+    <input type="number" class="set-rpe" placeholder="—" inputmode="decimal" min="1" max="10" step="0.5" />
+    <button class="btn-icon btn-remove-set" aria-label="Remove set">✕</button>
+  </div>
+</template>
+
+<script src="js/storage.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
