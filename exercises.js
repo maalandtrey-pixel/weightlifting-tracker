@@ -122,6 +122,8 @@ function renderExerciseDetail(name) {
     </div>
   `;
   container.appendChild(prSection);
+
+  renderProgressCharts(container, entry.sets);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
