@@ -25,6 +25,7 @@
       <div class="home-actions">
         <button id="btn-start-workout" class="btn btn-primary btn-large">+ Start New Workout</button>
         <button id="btn-view-history" class="btn btn-secondary btn-block">View History</button>
+        <button id="btn-view-records" class="btn btn-secondary btn-block">Personal Records</button>
       </div>
       <p id="home-summary" class="home-summary"></p>
     </section>
@@ -63,6 +64,17 @@
       <div id="workout-detail-content"></div>
     </section>
 
+    <section id="screen-exercises" class="screen">
+      <button id="btn-exercises-back" class="btn btn-text btn-back">‹ Back</button>
+      <h2 class="screen-title">Personal Records</h2>
+      <div id="exercises-list" class="history-list"></div>
+    </section>
+
+    <section id="screen-exercise-detail" class="screen">
+      <button id="btn-exercise-detail-back" class="btn btn-text btn-back">‹ Back</button>
+      <div id="exercise-detail-content"></div>
+    </section>
+
   </main>
 </div>
 
@@ -99,5 +111,6 @@
 <script src="storage.js"></script>
 <script src="app.js"></script>
 <script src="history.js"></script>
+<script src="exercises.js"></script>
 </body>
 </html>

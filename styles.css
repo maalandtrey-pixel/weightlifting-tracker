@@ -439,3 +439,45 @@ input[type="number"] {
   text-align: center;
   font-size: 0.9rem;
 }
+
+.screen-title {
+  margin: 0 0 1rem;
+}
+
+.pr-stats {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.pr-card {
+  flex: 1;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.2rem;
+}
+
+.pr-label {
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.pr-value {
+  color: var(--accent);
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.pr-sub {
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+}
