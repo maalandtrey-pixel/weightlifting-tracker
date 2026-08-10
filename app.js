@@ -36,7 +36,7 @@ function startNewWorkout() {
     exercises: [],
   };
   document.getElementById("exercise-list").innerHTML = "";
-  document.getElementById("workout-date").textContent = formatDateForDisplay(currentWorkout.date);
+  document.getElementById("workout-date-input").value = currentWorkout.date;
   showScreen("screen-workout");
 }
 
@@ -119,6 +119,8 @@ function finishWorkout() {
     alert("Add at least one exercise with a set before finishing.");
     return;
   }
+  const dateValue = document.getElementById("workout-date-input").value;
+  currentWorkout.date = dateValue || todayISO();
   currentWorkout.exercises = exercises;
   addWorkout(currentWorkout);
   currentWorkout = null;

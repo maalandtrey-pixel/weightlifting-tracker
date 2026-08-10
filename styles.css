@@ -137,9 +137,15 @@ body {
   margin-bottom: 1rem;
 }
 
-.workout-date {
-  color: var(--text-secondary);
+.workout-date-input {
+  color-scheme: dark;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text);
   font-weight: 600;
+  font-size: 0.95rem;
+  padding: 0.5rem 0.6rem;
 }
 
 .exercise-card {
