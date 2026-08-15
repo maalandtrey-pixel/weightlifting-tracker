@@ -589,10 +589,18 @@ input[type="number"] {
   accent-color: var(--accent);
 }
 
+.btn-toggle-add-exercise {
+  margin-top: 0.6rem;
+}
+
 .routine-add-exercise-row {
   display: flex;
   gap: 0.5rem;
   margin-top: 0.6rem;
+}
+
+.hidden {
+  display: none;
 }
 
 .routine-add-exercise-input {

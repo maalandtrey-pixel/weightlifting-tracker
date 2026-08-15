@@ -88,20 +88,40 @@ function renderRoutineExerciseGroups() {
       section.appendChild(label);
     });
 
+    const addToggleBtn = document.createElement("button");
+    addToggleBtn.type = "button";
+    addToggleBtn.className = "btn btn-ghost btn-block btn-toggle-add-exercise";
+    addToggleBtn.textContent = "+ Add Exercise";
+
     const addRow = document.createElement("div");
-    addRow.className = "routine-add-exercise-row";
+    addRow.className = "routine-add-exercise-row hidden";
     addRow.innerHTML = `
-      <input type="text" class="routine-add-exercise-input" placeholder="Add new exercise" />
-      <button type="button" class="btn btn-ghost btn-add-lib-exercise">+ Add</button>
+      <input type="text" class="routine-add-exercise-input" placeholder="New exercise name" />
+      <button type="button" class="btn btn-primary btn-confirm-add-exercise">Add</button>
     `;
     const addInput = addRow.querySelector(".routine-add-exercise-input");
-    addRow.querySelector(".btn-add-lib-exercise").addEventListener("click", () => {
+
+    addToggleBtn.addEventListener("click", () => {
+      addRow.classList.toggle("hidden");
+      if (!addRow.classList.contains("hidden")) addInput.focus();
+    });
+
+    function confirmAdd() {
       const name = addInput.value.trim();
       if (!name) return;
       addExerciseToLibrary(group.category, name);
-      routineSelectedExercises.add(name);
       renderRoutineExerciseGroups();
+    }
+
+    addRow.querySelector(".btn-confirm-add-exercise").addEventListener("click", confirmAdd);
+    addInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        confirmAdd();
+      }
     });
+
+    section.appendChild(addToggleBtn);
     section.appendChild(addRow);
 
     container.appendChild(section);
