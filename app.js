@@ -28,7 +28,10 @@ function renderHomeSummary() {
   }
 }
 
+const DEFAULT_REST_SECONDS = 180;
+
 function startNewWorkout(templateId) {
+  stopAllRestTimers(document.getElementById("exercise-list"));
   currentWorkout = {
     id: generateId(),
     date: todayISO(),
@@ -48,6 +51,7 @@ function addExerciseCard() {
   card.dataset.exerciseId = exerciseId;
 
   card.querySelector(".btn-remove-exercise").addEventListener("click", () => {
+    stopAllRestTimers(card);
     card.remove();
   });
 
@@ -63,15 +67,77 @@ function addExerciseCard() {
 
 function addSetRow(setsListEl) {
   const template = document.getElementById("template-set-row");
-  const row = template.content.firstElementChild.cloneNode(true);
-  row.querySelector(".set-number").textContent = setsListEl.children.length + 1;
+  const entry = template.content.firstElementChild.cloneNode(true);
+  entry.querySelector(".set-number").textContent = setsListEl.children.length + 1;
 
-  row.querySelector(".btn-remove-set").addEventListener("click", () => {
-    row.remove();
+  entry.querySelector(".btn-remove-set").addEventListener("click", () => {
+    stopRestTimer(entry);
+    entry.remove();
     renumberSets(setsListEl);
   });
 
-  setsListEl.appendChild(row);
+  setupSetTimer(entry);
+
+  setsListEl.appendChild(entry);
+}
+
+function formatRestTime(totalSeconds) {
+  const clamped = Math.max(0, totalSeconds);
+  const minutes = Math.floor(clamped / 60);
+  const seconds = clamped % 60;
+  return `${minutes}:${String(seconds).padStart(2, "0")}`;
+}
+
+function setupSetTimer(entry) {
+  const checkbox = entry.querySelector(".set-complete-checkbox");
+  const display = entry.querySelector(".rest-timer-display");
+
+  entry._restSeconds = DEFAULT_REST_SECONDS;
+  entry._restIntervalId = null;
+
+  function render() {
+    display.textContent = formatRestTime(entry._restSeconds);
+    display.classList.toggle("rest-done", entry._restSeconds <= 0);
+  }
+  render();
+
+  function tick() {
+    entry._restSeconds -= 1;
+    if (entry._restSeconds <= 0) {
+      entry._restSeconds = 0;
+      stopRestTimer(entry);
+    }
+    render();
+  }
+
+  checkbox.addEventListener("change", () => {
+    if (checkbox.checked) {
+      if (entry._restSeconds <= 0) entry._restSeconds = DEFAULT_REST_SECONDS;
+      render();
+      entry._restIntervalId = setInterval(tick, 1000);
+    } else {
+      stopRestTimer(entry);
+    }
+  });
+
+  entry.querySelectorAll(".rest-timer-adjust").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const delta = Number(btn.dataset.delta);
+      entry._restSeconds = Math.max(0, entry._restSeconds + delta);
+      render();
+    });
+  });
+}
+
+function stopRestTimer(entry) {
+  if (entry._restIntervalId) {
+    clearInterval(entry._restIntervalId);
+    entry._restIntervalId = null;
+  }
+}
+
+function stopAllRestTimers(container) {
+  container.querySelectorAll(".set-entry").forEach((entry) => stopRestTimer(entry));
 }
 
 function renumberSets(setsListEl) {
@@ -138,7 +204,7 @@ function cancelWorkout() {
 document.addEventListener("DOMContentLoaded", () => {
   renderHomeSummary();
 
-  document.getElementById("btn-start-workout").addEventListener("click", startNewWorkout);
+  document.getElementById("btn-start-workout").addEventListener("click", () => startNewWorkout());
   document.getElementById("btn-add-exercise").addEventListener("click", addExerciseCard);
   document.getElementById("btn-finish-workout").addEventListener("click", finishWorkout);
   document.getElementById("btn-cancel-workout").addEventListener("click", cancelWorkout);

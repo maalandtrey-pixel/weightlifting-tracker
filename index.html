@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-title" content="Weights" />
 <link rel="manifest" href="manifest.json" />
 <link rel="icon" href="icon.svg" type="image/svg+xml" />
-<link rel="stylesheet" href="styles.css?v=10" />
+<link rel="stylesheet" href="styles.css?v=11" />
 </head>
 <body>
 <div id="app">
@@ -106,7 +106,7 @@
     </div>
     <div class="sets-table">
       <div class="sets-header">
-        <span>Set</span><span>Weight</span><span>Reps</span><span>RPE</span><span></span>
+        <span></span><span>Set</span><span>Weight</span><span>Reps</span><span>RPE</span><span></span>
       </div>
       <div class="sets-list"></div>
     </div>
@@ -115,20 +115,29 @@
 </template>
 
 <template id="template-set-row">
-  <div class="set-row">
-    <span class="set-number">1</span>
-    <input type="number" class="set-weight" placeholder="0" inputmode="decimal" step="0.5" min="0" />
-    <input type="number" class="set-reps" placeholder="0" inputmode="numeric" min="0" />
-    <input type="number" class="set-rpe" placeholder="—" inputmode="decimal" min="1" max="10" step="0.5" />
-    <button class="btn-icon btn-remove-set" aria-label="Remove set">✕</button>
+  <div class="set-entry">
+    <div class="set-row">
+      <input type="checkbox" class="set-complete-checkbox" aria-label="Mark set complete" />
+      <span class="set-number">1</span>
+      <input type="number" class="set-weight" placeholder="0" inputmode="decimal" step="0.5" min="0" />
+      <input type="number" class="set-reps" placeholder="0" inputmode="numeric" min="0" />
+      <input type="number" class="set-rpe" placeholder="—" inputmode="decimal" min="1" max="10" step="0.5" />
+      <button class="btn-icon btn-remove-set" aria-label="Remove set">✕</button>
+    </div>
+    <div class="set-rest-timer">
+      <span class="rest-timer-label">Rest</span>
+      <button type="button" class="rest-timer-adjust" data-delta="-15">−15s</button>
+      <span class="rest-timer-display">3:00</span>
+      <button type="button" class="rest-timer-adjust" data-delta="15">+15s</button>
+    </div>
   </div>
 </template>
 
-<script src="storage.js?v=10"></script>
-<script src="app.js?v=10"></script>
-<script src="history.js?v=10"></script>
-<script src="exercises.js?v=10"></script>
-<script src="charts.js?v=10"></script>
-<script src="routines.js?v=10"></script>
+<script src="storage.js?v=11"></script>
+<script src="app.js?v=11"></script>
+<script src="history.js?v=11"></script>
+<script src="exercises.js?v=11"></script>
+<script src="charts.js?v=11"></script>
+<script src="routines.js?v=11"></script>
 </body>
 </html>
