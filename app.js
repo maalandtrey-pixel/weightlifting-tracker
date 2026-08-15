@@ -28,11 +28,12 @@ function renderHomeSummary() {
   }
 }
 
-function startNewWorkout() {
+function startNewWorkout(templateId) {
   currentWorkout = {
     id: generateId(),
     date: todayISO(),
     startedAt: new Date().toISOString(),
+    templateId: templateId || null,
     exercises: [],
   };
   document.getElementById("exercise-list").innerHTML = "";

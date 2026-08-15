@@ -162,14 +162,37 @@ function deleteRoutine() {
   openRoutinesList();
 }
 
+function getLastWorkoutForTemplate(routineId) {
+  const matches = loadData().workouts.filter((w) => w.templateId === routineId);
+  if (matches.length === 0) return null;
+  return matches.reduce((latest, w) => (w.startedAt > latest.startedAt ? w : latest));
+}
+
 function startWorkoutFromRoutine(routineId) {
   const routine = loadData().routines.find((r) => r.id === routineId);
   if (!routine) return;
-  startNewWorkout();
+  const lastWorkout = getLastWorkoutForTemplate(routineId);
+
+  startNewWorkout(routineId);
   routine.exerciseNames.forEach((name) => {
     const card = addExerciseCard();
     card.querySelector(".exercise-name-input").value = name;
     card.querySelector(".exercise-name-input").blur();
+
+    const prevExercise = lastWorkout
+      ? lastWorkout.exercises.find((e) => e.name.trim().toLowerCase() === name.trim().toLowerCase())
+      : null;
+
+    if (prevExercise && prevExercise.sets.length > 0) {
+      const setsList = card.querySelector(".sets-list");
+      setsList.innerHTML = "";
+      prevExercise.sets.forEach((prevSet) => {
+        addSetRow(setsList);
+        const row = setsList.lastElementChild;
+        if (prevSet.weight !== null) row.querySelector(".set-weight").value = prevSet.weight;
+        if (prevSet.reps !== null) row.querySelector(".set-reps").value = prevSet.reps;
+      });
+    }
   });
 }
 
