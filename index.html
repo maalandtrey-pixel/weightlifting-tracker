@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-title" content="Weights" />
 <link rel="manifest" href="manifest.json" />
 <link rel="icon" href="icon.svg" type="image/svg+xml" />
-<link rel="stylesheet" href="styles.css?v=8" />
+<link rel="stylesheet" href="styles.css?v=9" />
 </head>
 <body>
 <div id="app">
@@ -26,7 +26,7 @@
         <button id="btn-start-workout" class="btn btn-primary btn-large">+ Start New Workout</button>
         <button id="btn-view-history" class="btn btn-secondary btn-block">View History</button>
         <button id="btn-view-records" class="btn btn-secondary btn-block">Personal Records</button>
-        <button id="btn-view-routines" class="btn btn-secondary btn-block">Routines</button>
+        <button id="btn-view-routines" class="btn btn-secondary btn-block">Templates</button>
       </div>
       <p id="home-summary" class="home-summary"></p>
     </section>
@@ -78,17 +78,17 @@
 
     <section id="screen-routines" class="screen">
       <button id="btn-routines-back" class="btn btn-text btn-back">‹ Back</button>
-      <h2 class="screen-title">Routines</h2>
-      <button id="btn-new-routine" class="btn btn-secondary btn-block">+ New Routine</button>
+      <h2 class="screen-title">Templates</h2>
+      <button id="btn-new-routine" class="btn btn-secondary btn-block">+ New Template</button>
       <div id="routines-list" class="routines-list"></div>
     </section>
 
     <section id="screen-routine-editor" class="screen">
       <button id="btn-routine-editor-back" class="btn btn-text btn-back">‹ Back</button>
-      <input type="text" id="routine-name-input" class="routine-name-input" placeholder="Routine name (e.g. Push Day)" />
+      <input type="text" id="routine-name-input" class="routine-name-input" placeholder="Template name (e.g. Push Day)" />
       <div id="routine-exercise-groups"></div>
-      <button id="btn-save-routine" class="btn btn-primary btn-block">Save Routine</button>
-      <button id="btn-delete-routine" class="btn btn-text btn-block btn-delete-routine">Delete Routine</button>
+      <button id="btn-save-routine" class="btn btn-primary btn-block">Save Template</button>
+      <button id="btn-delete-routine" class="btn btn-text btn-block btn-delete-routine">Delete Template</button>
     </section>
 
   </main>
@@ -124,11 +124,11 @@
   </div>
 </template>
 
-<script src="storage.js?v=8"></script>
-<script src="app.js?v=8"></script>
-<script src="history.js?v=8"></script>
-<script src="exercises.js?v=8"></script>
-<script src="charts.js?v=8"></script>
-<script src="routines.js?v=8"></script>
+<script src="storage.js?v=9"></script>
+<script src="app.js?v=9"></script>
+<script src="history.js?v=9"></script>
+<script src="exercises.js?v=9"></script>
+<script src="charts.js?v=9"></script>
+<script src="routines.js?v=9"></script>
 </body>
 </html>

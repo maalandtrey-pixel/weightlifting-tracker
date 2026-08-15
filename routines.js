@@ -29,7 +29,7 @@ function renderRoutinesList() {
   if (routines.length === 0) {
     const empty = document.createElement("p");
     empty.className = "history-empty";
-    empty.textContent = "No routines yet. Create one to get started.";
+    empty.textContent = "No templates yet. Create one to get started.";
     listEl.appendChild(empty);
     return;
   }
@@ -131,7 +131,7 @@ function renderRoutineExerciseGroups() {
 function saveRoutineFromForm() {
   const name = document.getElementById("routine-name-input").value.trim();
   if (!name) {
-    alert("Give your routine a name.");
+    alert("Give your template a name.");
     return;
   }
   if (routineSelectedExercises.size === 0) {
@@ -155,7 +155,7 @@ function saveRoutineFromForm() {
 
 function deleteRoutine() {
   if (!editingRoutineId) return;
-  if (!confirm("Delete this routine?")) return;
+  if (!confirm("Delete this template?")) return;
   const data = loadData();
   data.routines = data.routines.filter((r) => r.id !== editingRoutineId);
   saveData(data);
