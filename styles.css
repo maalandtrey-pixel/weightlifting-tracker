@@ -282,10 +282,15 @@ body {
   font-weight: 700;
   min-width: 2.6rem;
   text-align: center;
+  white-space: nowrap;
 }
 
 .rest-timer-display.rest-done {
   color: var(--accent);
+}
+
+.rest-timer-display.rest-overtime {
+  color: var(--danger);
 }
 
 .rest-timer-adjust {

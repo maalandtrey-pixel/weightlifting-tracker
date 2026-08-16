@@ -88,51 +88,134 @@ function formatRestTime(totalSeconds) {
   return `${minutes}:${String(seconds).padStart(2, "0")}`;
 }
 
+// Active timers are tracked here instead of one setInterval per set, so a single
+// global tick can drive every visible countdown and recompute instantly on wake.
+const activeTimerEntries = new Set();
+let globalTimerIntervalId = null;
+
+function ensureGlobalTimerLoop() {
+  if (globalTimerIntervalId !== null) return;
+  globalTimerIntervalId = setInterval(renderAllActiveTimers, 1000);
+}
+
+function renderAllActiveTimers() {
+  activeTimerEntries.forEach((entry) => entry._renderTimer());
+}
+
+// Locking the phone or backgrounding the app suspends/throttles JS timers, so a
+// decrementing counter drifts or freezes. Instead we always recompute remaining
+// time from a fixed end-timestamp vs. the real clock, and force a recompute the
+// moment the app becomes visible again so the display is instantly accurate.
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible") renderAllActiveTimers();
+});
+window.addEventListener("pageshow", renderAllActiveTimers);
+window.addEventListener("focus", renderAllActiveTimers);
+
+let notificationPermissionRequested = false;
+
+function scheduleRestNotification(entry) {
+  cancelRestNotification(entry);
+  if (!("Notification" in window)) return;
+
+  function doSchedule() {
+    const msUntilEnd = entry._restEndAt - Date.now();
+    if (msUntilEnd <= 0) return;
+    entry._notificationTimeoutId = setTimeout(() => {
+      const card = entry.closest(".exercise-card");
+      const exerciseName = card ? card.querySelector(".exercise-name-input").value.trim() : "";
+      try {
+        new Notification("Rest complete", {
+          body: exerciseName ? `Time for your next ${exerciseName} set.` : "Time for your next set.",
+          tag: entry._notificationId,
+        });
+      } catch (e) {
+        // Notification construction can fail in some contexts; the on-screen
+        // overtime counter is the reliable fallback either way.
+      }
+    }, msUntilEnd);
+  }
+
+  if (Notification.permission === "granted") {
+    doSchedule();
+  } else if (Notification.permission === "default") {
+    notificationPermissionRequested = true;
+    Notification.requestPermission().then((permission) => {
+      if (permission === "granted") doSchedule();
+    });
+  }
+}
+
+function cancelRestNotification(entry) {
+  if (entry._notificationTimeoutId) {
+    clearTimeout(entry._notificationTimeoutId);
+    entry._notificationTimeoutId = null;
+  }
+}
+
 function setupSetTimer(entry) {
   const checkbox = entry.querySelector(".set-complete-checkbox");
   const display = entry.querySelector(".rest-timer-display");
 
-  entry._restSeconds = DEFAULT_REST_SECONDS;
-  entry._restIntervalId = null;
+  entry._restDuration = DEFAULT_REST_SECONDS;
+  entry._restEndAt = null;
+  entry._notificationTimeoutId = null;
+  entry._notificationId = generateId();
 
   function render() {
-    display.textContent = formatRestTime(entry._restSeconds);
-    display.classList.toggle("rest-done", entry._restSeconds <= 0);
-  }
-  render();
-
-  function tick() {
-    entry._restSeconds -= 1;
-    if (entry._restSeconds <= 0) {
-      entry._restSeconds = 0;
-      stopRestTimer(entry);
+    const remainingMs = entry._restEndAt !== null ? entry._restEndAt - Date.now() : entry._restDuration * 1000;
+    const remainingSeconds = Math.round(remainingMs / 1000);
+    if (remainingSeconds >= 0) {
+      display.textContent = formatRestTime(remainingSeconds);
+      display.classList.remove("rest-overtime");
+      display.classList.toggle("rest-done", remainingSeconds === 0);
+    } else {
+      display.textContent = `+${formatRestTime(-remainingSeconds)} over`;
+      display.classList.add("rest-overtime");
+      display.classList.remove("rest-done");
     }
-    render();
   }
+  entry._renderTimer = render;
+  render();
 
   checkbox.addEventListener("change", () => {
     if (checkbox.checked) {
-      if (entry._restSeconds <= 0) entry._restSeconds = DEFAULT_REST_SECONDS;
+      if (entry._restDuration <= 0) entry._restDuration = DEFAULT_REST_SECONDS;
+      entry._restEndAt = Date.now() + entry._restDuration * 1000;
+      activeTimerEntries.add(entry);
+      ensureGlobalTimerLoop();
+      scheduleRestNotification(entry);
       render();
-      entry._restIntervalId = setInterval(tick, 1000);
     } else {
       stopRestTimer(entry);
+      render();
     }
   });
 
   entry.querySelectorAll(".rest-timer-adjust").forEach((btn) => {
     btn.addEventListener("click", () => {
       const delta = Number(btn.dataset.delta);
-      entry._restSeconds = Math.max(0, entry._restSeconds + delta);
+      if (entry._restEndAt !== null) {
+        entry._restEndAt += delta * 1000;
+        scheduleRestNotification(entry);
+      } else {
+        entry._restDuration = Math.max(0, entry._restDuration + delta);
+      }
       render();
     });
   });
 }
 
 function stopRestTimer(entry) {
-  if (entry._restIntervalId) {
-    clearInterval(entry._restIntervalId);
-    entry._restIntervalId = null;
+  if (entry._restEndAt !== null) {
+    entry._restDuration = Math.max(0, Math.round((entry._restEndAt - Date.now()) / 1000));
+    entry._restEndAt = null;
+  }
+  activeTimerEntries.delete(entry);
+  cancelRestNotification(entry);
+  if (activeTimerEntries.size === 0 && globalTimerIntervalId !== null) {
+    clearInterval(globalTimerIntervalId);
+    globalTimerIntervalId = null;
   }
 }
 
