@@ -102,17 +102,63 @@ function renderAllActiveTimers() {
   activeTimerEntries.forEach((entry) => entry._renderTimer());
 }
 
-// Locking the phone or backgrounding the app suspends/throttles JS timers, so a
-// decrementing counter drifts or freezes. Instead we always recompute remaining
-// time from a fixed end-timestamp vs. the real clock, and force a recompute the
-// moment the app becomes visible again so the display is instantly accurate.
-document.addEventListener("visibilitychange", () => {
-  if (document.visibilityState === "visible") renderAllActiveTimers();
-});
-window.addEventListener("pageshow", renderAllActiveTimers);
-window.addEventListener("focus", renderAllActiveTimers);
+// Locking the phone or backgrounding the app suspends/throttles JS timers. Worse,
+// the browser can silently kill the running setInterval outright while hidden, so
+// we can't trust globalTimerIntervalId still points at a live timer. On any signal
+// that the app might be back in front of the user, we recompute every display from
+// its stored end-timestamp (always correct regardless of what happened while
+// hidden) and unconditionally tear down + restart the interval rather than
+// assuming it survived.
+function resyncTimers() {
+  renderAllActiveTimers();
+  if (activeTimerEntries.size === 0) return;
+  if (globalTimerIntervalId !== null) {
+    clearInterval(globalTimerIntervalId);
+    globalTimerIntervalId = null;
+  }
+  ensureGlobalTimerLoop();
+}
 
-let notificationPermissionRequested = false;
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible") resyncTimers();
+});
+window.addEventListener("pageshow", resyncTimers);
+window.addEventListener("focus", resyncTimers);
+// iOS home-screen web apps don't always fire the events above reliably across a
+// lock/unlock cycle, so the first touch after reopening is a safety-net resync.
+document.addEventListener("touchstart", resyncTimers, { passive: true });
+
+// iOS only allows the Notification permission prompt (and only allows actually
+// showing notifications) for a page that has an active Service Worker — a plain
+// `new Notification(...)` call from the page itself is not supported there. We
+// register a minimal Service Worker up front so both requestPermission() and
+// showNotification() work; other browsers work fine either way.
+let swRegistrationPromise = null;
+if ("serviceWorker" in navigator) {
+  swRegistrationPromise = navigator.serviceWorker.register("service-worker.js").catch(() => null);
+}
+
+function showRestNotification(tag, body) {
+  function direct() {
+    try {
+      new Notification("Rest complete", { body, tag });
+    } catch (e) {
+      // Not supported in this context (notably iOS without an active Service
+      // Worker); the on-screen overtime counter remains the reliable fallback.
+    }
+  }
+
+  if (swRegistrationPromise) {
+    swRegistrationPromise
+      .then((registration) => {
+        if (!registration) throw new Error("no service worker registration");
+        return registration.showNotification("Rest complete", { body, tag });
+      })
+      .catch(direct);
+  } else {
+    direct();
+  }
+}
 
 function scheduleRestNotification(entry) {
   cancelRestNotification(entry);
@@ -124,22 +170,13 @@ function scheduleRestNotification(entry) {
     entry._notificationTimeoutId = setTimeout(() => {
       const card = entry.closest(".exercise-card");
       const exerciseName = card ? card.querySelector(".exercise-name-input").value.trim() : "";
-      try {
-        new Notification("Rest complete", {
-          body: exerciseName ? `Time for your next ${exerciseName} set.` : "Time for your next set.",
-          tag: entry._notificationId,
-        });
-      } catch (e) {
-        // Notification construction can fail in some contexts; the on-screen
-        // overtime counter is the reliable fallback either way.
-      }
+      showRestNotification(entry._notificationId, exerciseName ? `Time for your next ${exerciseName} set.` : "Time for your next set.");
     }, msUntilEnd);
   }
 
   if (Notification.permission === "granted") {
     doSchedule();
   } else if (Notification.permission === "default") {
-    notificationPermissionRequested = true;
     Notification.requestPermission().then((permission) => {
       if (permission === "granted") doSchedule();
     });
